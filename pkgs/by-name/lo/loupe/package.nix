@@ -34,6 +34,9 @@ stdenv.mkDerivation rec {
       url = "https://gitlab.gnome.org/GNOME/loupe/-/commit/aa2b4d59409c92ee402c6a86cb7c02f06854bb8d.patch";
       hash = "sha256-zKvXrPeIDGbK0RXcZoMkf2FAk+Do099kY7pt6KhFMEs=";
     })
+
+    # Fix paths in glycin library
+    glycin-loaders.passthru.glycinPathsPatch
   ];
 
   nativeBuildInputs = [
