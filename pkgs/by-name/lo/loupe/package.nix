@@ -8,6 +8,8 @@
 , meson
 , ninja
 , pkg-config
+, jq
+, moreutils
 , rustc
 , wrapGAppsHook4
 , gtk4
@@ -46,6 +48,8 @@ stdenv.mkDerivation rec {
     meson
     ninja
     pkg-config
+    jq
+    moreutils
     rustc
     wrapGAppsHook4
   ];
@@ -56,6 +60,15 @@ stdenv.mkDerivation rec {
     libadwaita
     libgweather
   ];
+
+  postPatch = ''
+    # Replace hash of file we patch in vendored glycin.
+    jq \
+      --arg hash "$(sha256sum vendor/glycin/src/dbus.rs | cut -d' ' -f 1)" \
+      '.files."src/dbus.rs" = $hash' \
+      vendor/glycin/.cargo-checksum.json \
+      | sponge vendor/glycin/.cargo-checksum.json
+  '';
 
   preFixup = ''
     # Needed for the glycin crate to find loaders.
