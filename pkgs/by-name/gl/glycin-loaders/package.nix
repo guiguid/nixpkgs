@@ -26,7 +26,10 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   patches = [
-    # Fix paths in glycin library
+    # Fix paths in glycin library.
+    # Not actually needed for this package since we are only building loaders
+    # and this patch is relevant just to apps that use the loaders
+    # but apply it here to ensure the patch continues to apply.
     finalAttrs.passthru.glycinPathsPatch
   ];
 
