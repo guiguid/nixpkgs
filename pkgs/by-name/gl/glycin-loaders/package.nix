@@ -9,8 +9,8 @@
 , ninja
 , pkg-config
 , rustc
-, wrapGAppsHook4
 , gtk4
+, cairo
 , libheif
 , libxml2
 , gnome
@@ -39,11 +39,11 @@ stdenv.mkDerivation (finalAttrs: {
     ninja
     pkg-config
     rustc
-    wrapGAppsHook4
   ];
 
   buildInputs = [
-    gtk4
+    gtk4 # for GdkTexture
+    cairo
     libheif
     libxml2 # for librsvg crate
   ];
