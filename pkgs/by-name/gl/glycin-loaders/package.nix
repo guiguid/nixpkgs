@@ -26,10 +26,8 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   patches = [
-    (substituteAll {
-      src = ./fix-paths.patch;
-      bwrap = "${bubblewrap}/bin/bwrap";
-    })
+    # Fix paths in glycin library
+    finalAttrs.passthru.glycinPathsPatch
   ];
 
   nativeBuildInputs = [
@@ -48,8 +46,15 @@ stdenv.mkDerivation (finalAttrs: {
     libxml2 # for librsvg crate
   ];
 
-  passthru.updateScript = gnome.updateScript {
-    packageName = "glycin-loaders";
+  passthru = {
+    updateScript = gnome.updateScript {
+      packageName = "glycin-loaders";
+    };
+
+    glycinPathsPatch = substituteAll {
+      src = ./fix-glycin-paths.patch;
+      bwrap = "${bubblewrap}/bin/bwrap";
+    };
   };
 
   meta = with lib; {
