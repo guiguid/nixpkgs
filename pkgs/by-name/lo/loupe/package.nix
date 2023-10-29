@@ -1,6 +1,7 @@
 { stdenv
 , lib
 , fetchurl
+, fetchpatch2
 , cargo
 , desktop-file-utils
 , itstool
@@ -25,6 +26,15 @@ stdenv.mkDerivation rec {
     url = "mirror://gnome/sources/loupe/${lib.versions.major version}/loupe-${version}.tar.xz";
     hash = "sha256-TWSP47a/6lUpmGWW1qRQp205fx3wqNju3s8BBAYiFHE=";
   };
+
+  patches = [
+    # Enable glycin sandbox
+    # https://gitlab.gnome.org/GNOME/loupe/-/issues/252
+    (fetchpatch2 {
+      url = "https://gitlab.gnome.org/GNOME/loupe/-/commit/aa2b4d59409c92ee402c6a86cb7c02f06854bb8d.patch";
+      hash = "sha256-zKvXrPeIDGbK0RXcZoMkf2FAk+Do099kY7pt6KhFMEs=";
+    })
+  ];
 
   nativeBuildInputs = [
     cargo
