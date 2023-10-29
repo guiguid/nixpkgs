@@ -53,6 +53,12 @@ python3.pkgs.buildPythonApplication rec {
     setuptools
   ];
 
+  dontWrapGApps = true;
+
+  preFixup = ''
+    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+  '';
+
   passthru = {
     updateScript = gnome.updateScript {
       packageName = "accerciser";
