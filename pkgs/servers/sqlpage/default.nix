@@ -1,4 +1,5 @@
-{ lib
+{ 
+  lib
 , rustPlatform
 , fetchFromGitHub
 , pkg-config
@@ -11,8 +12,8 @@
 
 let
   apexcharts = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/apexcharts@3.43.2-0/dist/apexcharts.min.js";
-    sha256 = "sha256-7al9VaQHu7u5jfx1HZf+T8k27kbIhgHvRwaeIeYEjVI=";
+    url = "https://cdn.jsdelivr.net/npm/apexcharts@3.47.0/dist/apexcharts.min.js";
+    sha256 = "sha256-StFDdV+DR9yItbCXAGTK6EUcu613N3vM0i5ngrYZlz4=";
   };
   tablerCss = fetchurl {
     url = "https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css";
@@ -30,26 +31,26 @@ let
     url = "https://cdn.jsdelivr.net/npm/list.js-fixed@2.3.4/dist/list.min.js";
     sha256 = "sha256-sYy7qNJW7RTuaNA0jq6Yrtfs57ypYrItZ3f8T7kqfPM=";
   };
-  tablerIcons = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/@tabler/icons@2.39.0/tabler-sprite.svg";
-    sha256 = "sha256-8C9PPhDyVnym0q/RkQlTyfjKbAMRsYBlRtsMbNAepvY=";
+    tablerIcons = fetchurl {
+    url = "https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/tabler-sprite.svg";
+    sha256 = "sha256-dphCRqfQZmC7finy/HU9QnJQESwgWoUxRHkz7On877I=";
   };
 in
 
 rustPlatform.buildRustPackage rec {
   pname = "sqlpage";
-  version = "0.15.1";
+  version = "0.20.0";
 
   src = fetchFromGitHub {
     owner = "lovasoa";
     repo = "SQLpage";
     rev = "v${version}";
-    hash = "sha256-0CPWMVdX0HGPMfIiDfC6TJ2t07O6eZcS7yEDVAvjLUc=";
+    sha256 = "sha256-zmAnlsYL36qqO2cLSVdsnUG47xHslOvDzcGICNxG/5c=";
   };
 
   postPatch = ''
     substituteInPlace sqlpage/apexcharts.js \
-      --replace '/* !include https://cdn.jsdelivr.net/npm/apexcharts@3.43.2-0/dist/apexcharts.min.js */' \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/apexcharts@3.47.0/dist/apexcharts.min.js */' \
       "$(cat ${apexcharts})"
     substituteInPlace sqlpage/sqlpage.css \
       --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css */' \
@@ -64,11 +65,14 @@ rustPlatform.buildRustPackage rec {
       --replace '/* !include https://cdn.jsdelivr.net/npm/list.js-fixed@2.3.4/dist/list.min.js */' \
       "$(cat ${listJsFixed})"
     substituteInPlace sqlpage/tabler-icons.svg \
-      --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons@2.39.0/tabler-sprite.svg */' \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/tabler-sprite.svg */' \
       "$(cat ${tablerIcons})"
   '';
 
-  cargoHash = "sha256-ooK4eIaPbUsxgDuVJkWHlArMa81TtlRfR6YYEAh7cLY=";
+#/* !include https://cdn.jsdelivr.net/npm/@tabler/icons@2.43.0/tabler-sprite.svg */ 
+#  /* !include https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.0.1/dist/tabler-sprite.svg */
+  
+  cargoHash = "sha256-dPqO+yychyOybdTvdhWkcXyDlxIXO39KUZ80v+7Syqg=";
 
   nativeBuildInputs = [
     pkg-config
