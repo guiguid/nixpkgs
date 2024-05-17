@@ -31,21 +31,25 @@ let
     sha256 = "sha256-sYy7qNJW7RTuaNA0jq6Yrtfs57ypYrItZ3f8T7kqfPM=";
   };
   tablerIcons = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/tabler-sprite.svg";
-    sha256 = "sha256-dphCRqfQZmC7finy/HU9QnJQESwgWoUxRHkz7On877I=";
+    url = "https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.2.0/dist/tabler-sprite.svg";
+    sha256 = "sha256-/5EZGfY2dZE9x8+QELgShF2EkAu6fENdlTO8Sm3hyNI=";
+  };
+  tomselect = fetchurl {
+    url = "https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.popular.min.js";
+    sha256 = "sha256-51NcdIM8GseVFFmg8mUWDxfhjLCA+n8kw/Ojyo+6Hjk=";
   };
 in
 
 rustPlatform.buildRustPackage rec {
   pname = "sqlpage";
-  version = "0.20.0";
+  version = "0.20.5";
 
   src = fetchFromGitHub {
     owner = "lovasoa";
     repo = "SQLpage";
     rev = "v${version}";
-    sha256 = "sha256-zmAnlsYL36qqO2cLSVdsnUG47xHslOvDzcGICNxG/5c=";
-  };
+    sha256 = "sha256-Bjjiy+KV2dIS4vNuUmUgpIFCOAVQ5LdE9QEI443Qn5I=";
+    };
 
   postPatch = ''
     substituteInPlace sqlpage/apexcharts.js \
@@ -64,12 +68,15 @@ rustPlatform.buildRustPackage rec {
       --replace '/* !include https://cdn.jsdelivr.net/npm/list.js-fixed@2.3.4/dist/list.min.js */' \
       "$(cat ${listJsFixed})"
     substituteInPlace sqlpage/tabler-icons.svg \
-      --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/tabler-sprite.svg */' \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.2.0/dist/tabler-sprite.svg */' \
       "$(cat ${tablerIcons})"
-  '';
-
-  cargoHash = "sha256-dPqO+yychyOybdTvdhWkcXyDlxIXO39KUZ80v+7Syqg=";
-
+    substituteInPlace sqlpage/tomselect.js \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.popular.min.js */' \
+      "$(cat ${tomselect})"
+    '';
+  
+  cargoHash = "sha256-Ien2a18jo5QkazdQPq1XdAIrJic7PWfxiF40QHLpUFM=";
+  
   nativeBuildInputs = [
     pkg-config
   ];
