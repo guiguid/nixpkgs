@@ -11,8 +11,8 @@
 
 let
   apexcharts = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/apexcharts@3.43.2-0/dist/apexcharts.min.js";
-    sha256 = "sha256-7al9VaQHu7u5jfx1HZf+T8k27kbIhgHvRwaeIeYEjVI=";
+    url = "https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js";
+    sha256 = "sha256-74AuGLJETu9PiPQ69d/gxD3Wy3j10udgC7FQYPQjhyU=";
   };
   tablerCss = fetchurl {
     url = "https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css";
@@ -31,25 +31,29 @@ let
     sha256 = "sha256-sYy7qNJW7RTuaNA0jq6Yrtfs57ypYrItZ3f8T7kqfPM=";
   };
   tablerIcons = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/@tabler/icons@2.39.0/tabler-sprite.svg";
-    sha256 = "sha256-8C9PPhDyVnym0q/RkQlTyfjKbAMRsYBlRtsMbNAepvY=";
+    url = "https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.4.0/dist/tabler-sprite.svg";
+    sha256 = "sha256-iYxplXfIhVNBOmEEURN7/53A8Mi0hWCbWWo92BzncUA=";
+  };
+  tomselect = fetchurl {
+    url = "https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.popular.min.js";
+    sha256 = "sha256-51NcdIM8GseVFFmg8mUWDxfhjLCA+n8kw/Ojyo+6Hjk=";
   };
 in
 
 rustPlatform.buildRustPackage rec {
   pname = "sqlpage";
-  version = "0.15.1";
+  version = "0.21.0";
 
   src = fetchFromGitHub {
     owner = "lovasoa";
     repo = "SQLpage";
     rev = "v${version}";
-    hash = "sha256-0CPWMVdX0HGPMfIiDfC6TJ2t07O6eZcS7yEDVAvjLUc=";
-  };
+    sha256 = "sha256-e0GehPy6cLYA4QfT8kpNi3L0U7aAm+gaIYNKSRGrNyI=";
+    };
 
   postPatch = ''
     substituteInPlace sqlpage/apexcharts.js \
-      --replace '/* !include https://cdn.jsdelivr.net/npm/apexcharts@3.43.2-0/dist/apexcharts.min.js */' \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js */' \
       "$(cat ${apexcharts})"
     substituteInPlace sqlpage/sqlpage.css \
       --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css */' \
@@ -64,12 +68,15 @@ rustPlatform.buildRustPackage rec {
       --replace '/* !include https://cdn.jsdelivr.net/npm/list.js-fixed@2.3.4/dist/list.min.js */' \
       "$(cat ${listJsFixed})"
     substituteInPlace sqlpage/tabler-icons.svg \
-      --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons@2.39.0/tabler-sprite.svg */' \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.4.0/dist/tabler-sprite.svg */' \
       "$(cat ${tablerIcons})"
-  '';
-
-  cargoHash = "sha256-ooK4eIaPbUsxgDuVJkWHlArMa81TtlRfR6YYEAh7cLY=";
-
+    substituteInPlace sqlpage/tomselect.js \
+      --replace '/* !include https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.popular.min.js */' \
+      "$(cat ${tomselect})"
+    '';
+  
+  cargoHash = "sha256-fLwQ9O91+XsLNM3fleUysa0LWByHwxfLFVhzXc2LePw=";
+  
   nativeBuildInputs = [
     pkg-config
   ];
