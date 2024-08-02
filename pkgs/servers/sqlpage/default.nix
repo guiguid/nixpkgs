@@ -11,7 +11,7 @@
 
 let
   apexcharts = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js";
+    url = "https://cdn.jsdelivr.net/npm/apexcharts@3.50.0/dist/apexcharts.min.js";
     hash = "sha256-74AuGLJETu9PiPQ69d/gxD3Wy3j10udgC7FQYPQjhyU=";
   };
   tablerCss = fetchurl {
@@ -31,7 +31,7 @@ let
     hash = "sha256-sYy7qNJW7RTuaNA0jq6Yrtfs57ypYrItZ3f8T7kqfPM=";
   };
   tablerIcons = fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.4.0/dist/tabler-sprite.svg";
+    url = "https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.10.0/dist/tabler-sprite.svg";
     hash = "sha256-iYxplXfIhVNBOmEEURN7/53A8Mi0hWCbWWo92BzncUA=";
   };
   tomselect = fetchurl {
@@ -42,7 +42,7 @@ in
 
 rustPlatform.buildRustPackage rec {
   pname = "sqlpage";
-  version = "0.24.0";
+  version = "0.25.0";
 
   src = fetchFromGitHub {
     owner = "lovasoa";
@@ -53,7 +53,7 @@ rustPlatform.buildRustPackage rec {
 
   postPatch = ''
     substituteInPlace sqlpage/apexcharts.js \
-      --replace-fail '/* !include https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js */' \
+      --replace-fail '/* !include https://cdn.jsdelivr.net/npm/apexcharts@3.50.0/dist/apexcharts.min.js */' \
       "$(cat ${apexcharts})"
     substituteInPlace sqlpage/sqlpage.css \
       --replace-fail '/* !include https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css */' \
@@ -68,7 +68,7 @@ rustPlatform.buildRustPackage rec {
       --replace-fail '/* !include https://cdn.jsdelivr.net/npm/list.js-fixed@2.3.4/dist/list.min.js */' \
       "$(cat ${listJsFixed})"
     substituteInPlace sqlpage/tabler-icons.svg \
-      --replace-fail '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.4.0/dist/tabler-sprite.svg */' \
+      --replace-fail '/* !include https://cdn.jsdelivr.net/npm/@tabler/icons-sprite@3.10.0/dist/tabler-sprite.svg */' \
       "$(cat ${tablerIcons})"
     substituteInPlace sqlpage/tomselect.js \
       --replace-fail '/* !include https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.popular.min.js */' \
