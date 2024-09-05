@@ -42,7 +42,7 @@ in
 
 rustPlatform.buildRustPackage rec {
   pname = "sqlpage";
-  version = "0.25.0";
+  version = "0.28.0";
 
   src = fetchFromGitHub {
     owner = "lovasoa";
