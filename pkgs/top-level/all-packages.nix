@@ -971,6 +971,7 @@ with pkgs;
     prefetch-yarn-deps
     yarnConfigHook
     yarnBuildHook
+    yarnInstallHook
     fetchYarnDeps;
 
   find-cursor = callPackage ../tools/X11/find-cursor { };
@@ -11872,8 +11873,6 @@ with pkgs;
 
   qprint = callPackage ../tools/text/qprint { };
 
-  qrcp = callPackage ../tools/networking/qrcp { };
-
   qrscan = callPackage ../tools/misc/qrscan { };
 
   qtikz = libsForQt5.callPackage ../applications/graphics/ktikz { };
@@ -14793,7 +14792,7 @@ with pkgs;
     ocamlPackages = ocaml-ng.ocamlPackages_4_14;
   };
 
-  inherit (coqPackages) compcert;
+  inherit (coqPackages_8_19) compcert;
 
   computecpp-unwrapped = callPackage ../development/compilers/computecpp { };
   computecpp = wrapCCWith rec {
@@ -18855,8 +18854,6 @@ with pkgs;
 
   shellharden = callPackage ../development/tools/shellharden { };
 
-  schemaspy = callPackage ../development/tools/database/schemaspy { };
-
   scenebuilder = callPackage ../development/tools/scenebuilder { };
 
   scenic-view = callPackage ../development/tools/scenic-view { };
@@ -19489,13 +19486,10 @@ with pkgs;
 
   bosh-cli = callPackage ../applications/networking/cluster/bosh-cli { };
 
-  botan2 = callPackage ../development/libraries/botan/2.0.nix {
-    inherit (darwin.apple_sdk.frameworks) CoreServices Security;
-  };
-
-  botan3 = callPackage ../development/libraries/botan/3.0.nix {
-    inherit (darwin.apple_sdk.frameworks) CoreServices Security;
-  };
+  inherit (callPackages ../development/libraries/botan { })
+    botan2
+    botan3
+    ;
 
   box2d = callPackage ../development/libraries/box2d {
     inherit (darwin.apple_sdk.frameworks) Carbon Cocoa Kernel OpenGL;
@@ -21225,8 +21219,6 @@ with pkgs;
 
   libcue = callPackage ../development/libraries/libcue { };
 
-  libcutl = callPackage ../development/libraries/libcutl { };
-
   libcxxrt = callPackage ../development/libraries/libcxxrt {
     stdenv = if stdenv.hostPlatform.useLLVM or false
              then overrideCC stdenv buildPackages.llvmPackages.tools.clangNoLibcxx
@@ -22949,9 +22941,11 @@ with pkgs;
   glanceclient = with python311Packages; toPythonApplication python-glanceclient;
   heatclient = with python311Packages; toPythonApplication python-heatclient;
   ironicclient = with python311Packages; toPythonApplication python-ironicclient;
+  magnumclient = with python311Packages; toPythonApplication python-magnumclient;
   manilaclient = with python311Packages; toPythonApplication python-manilaclient;
   mistralclient = with python311Packages; toPythonApplication python-mistralclient;
   swiftclient = with python311Packages; toPythonApplication python-swiftclient;
+  troveclient = with python311Packages; toPythonApplication python-troveclient;
 
   openvdb = callPackage ../development/libraries/openvdb { };
 
@@ -23446,19 +23440,7 @@ with pkgs;
 
   scope-lite = callPackage ../development/libraries/scope-lite { };
 
-  SDL_classic = callPackage ../development/libraries/SDL ({
-    inherit (darwin.apple_sdk.frameworks) OpenGL CoreAudio CoreServices AudioUnit Kernel Cocoa GLUT;
-  } // lib.optionalAttrs stdenv.hostPlatform.isAndroid {
-    # libGLU doesn’t work with Android’s SDL
-    libGLU = null;
-  });
-
-  SDL_compat = callPackage ../development/libraries/SDL_compat {
-    inherit (darwin.apple_sdk.frameworks) Cocoa;
-    inherit (darwin) autoSignDarwinBinariesHook;
-  };
-
-  SDL = SDL_classic;
+  SDL = SDL1;
 
   SDL2 = callPackage ../development/libraries/SDL2 {
     inherit (darwin.apple_sdk.frameworks) AudioUnit Cocoa CoreAudio CoreServices ForceFeedback OpenGL;
@@ -25113,6 +25095,25 @@ with pkgs;
 
   meteor = callPackage ../servers/meteor { };
 
+  micro-full = micro.wrapper.override {
+    extraPackages = [
+      wl-clipboard
+      xclip
+    ];
+  };
+
+  micro-with-wl-clipboard = micro.wrapper.override {
+    extraPackages = [
+      wl-clipboard
+    ];
+  };
+
+  micro-with-xclip = micro.wrapper.override {
+    extraPackages = [
+      xclip
+    ];
+  };
+
   micronaut = callPackage ../development/tools/micronaut { };
 
   minio = callPackage ../servers/minio { };
@@ -25949,8 +25950,6 @@ with pkgs;
   zipkin = callPackage ../servers/monitoring/zipkin { };
 
   ### SERVERS / GEOSPATIAL
-
-  fit-trackee = callPackage ../servers/geospatial/fit-trackee { };
 
   martin = callPackage ../servers/geospatial/martin {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
@@ -26935,11 +26934,11 @@ with pkgs;
 
   # See `xenPackages` source for explanations.
   # Building with `xen` instead of `xen-slim` is possible, but makes no sense.
-  qemu_xen = lowPrio (qemu.override { hostCpuOnly = true; xenSupport = true; xen = xen-slim; });
   qemu_xen_4_19 = lowPrio (qemu.override { hostCpuOnly = true; xenSupport = true; xen = xenPackages.xen_4_19-slim; });
   qemu_xen_4_18 = lowPrio (qemu.override { hostCpuOnly = true; xenSupport = true; xen = xenPackages.xen_4_18-slim; });
   qemu_xen_4_17 = lowPrio (qemu.override { hostCpuOnly = true; xenSupport = true; xen = xenPackages.xen_4_17-slim; });
   qemu_xen_4_16 = lowPrio (qemu.override { hostCpuOnly = true; xenSupport = true; xen = xenPackages.xen_4_16-slim; });
+  qemu_xen = qemu_xen_4_19;
 
   qemu_test = lowPrio (qemu.override { hostCpuOnly = true; nixosTestRunner = true; });
 
@@ -28904,7 +28903,7 @@ with pkgs;
 
   backintime-common = callPackage ../applications/networking/sync/backintime/common.nix { };
 
-  backintime-qt = libsForQt5.callPackage ../applications/networking/sync/backintime/qt.nix { };
+  backintime-qt = qt6.callPackage ../applications/networking/sync/backintime/qt.nix { };
 
   backintime = backintime-qt;
 
@@ -31388,8 +31387,6 @@ with pkgs;
 
   lens = callPackage ../applications/networking/cluster/lens { };
 
-  openlens = callPackage ../applications/networking/cluster/openlens { };
-
   leo-editor = libsForQt5.callPackage ../applications/editors/leo-editor { };
 
   libkiwix = callPackage ../applications/misc/kiwix/lib.nix { };
@@ -31880,10 +31877,6 @@ with pkgs;
 
   clerk = callPackage ../applications/audio/clerk { };
 
-  jujutsu = callPackage ../applications/version-management/jujutsu {
-    inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
-  };
-
   nbstripout = callPackage ../applications/version-management/nbstripout { };
 
   ncmpc = callPackage ../applications/audio/ncmpc { };
@@ -32015,7 +32008,7 @@ with pkgs;
     autoreconfHook = buildPackages.autoreconfHook269;
   };
 
-  musescore = libsForQt5.callPackage ../applications/audio/musescore { };
+  musescore = qt6.callPackage ../applications/audio/musescore { };
 
   music-player = callPackage ../applications/audio/music-player { };
 
@@ -32822,9 +32815,17 @@ with pkgs;
   eiskaltdcpp = libsForQt5.callPackage ../applications/networking/p2p/eiskaltdcpp { };
 
   qemu = callPackage ../applications/virtualization/qemu {
-    inherit (darwin.apple_sdk.frameworks) CoreServices Cocoa Hypervisor vmnet;
+    inherit (darwin.apple_sdk_12_3.frameworks) CoreServices Cocoa Hypervisor Kernel vmnet;
     inherit (darwin.stubs) rez setfile;
     inherit (darwin) sigtool;
+    stdenv =
+      if stdenv.hostPlatform.isDarwin then
+        overrideSDK stdenv {
+          darwinSdkVersion = "12.3";
+          darwinMinVersion = "12.0";
+        }
+      else
+        stdenv;
   };
 
   qemu-python-utils = python3Packages.toPythonApplication (
@@ -34343,7 +34344,6 @@ with pkgs;
 
   westonLite = weston.override {
     demoSupport = false;
-    hdrSupport = false;
     jpegSupport = false;
     lcmsSupport = false;
     pangoSupport = false;
@@ -38873,8 +38873,6 @@ with pkgs;
   go-swagger = callPackage ../development/tools/go-swagger { };
 
   jx = callPackage ../applications/networking/cluster/jx { };
-
-  prow = callPackage ../applications/networking/cluster/prow { };
 
   pv-migrate = callPackage ../applications/networking/cluster/pv-migrate { };
 
